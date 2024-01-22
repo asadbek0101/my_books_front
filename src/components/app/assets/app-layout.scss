@@ -1,0 +1,23 @@
+.app-layout {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  .app-layout-background {
+    width: 1400px;
+    height: 200vh;
+    background-color: #333333;
+    position: absolute;
+    border-bottom-right-radius: 40px;
+    transform: rotate(-50deg);
+    left: -640px;
+    top: -620px;
+    z-index: -1;
+  }
+
+  .app-layout-body {
+    width: 100%;
+    height: 100%;
+  }
+}
