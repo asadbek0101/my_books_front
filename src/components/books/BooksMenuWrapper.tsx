@@ -1,45 +1,46 @@
 import { useCallback, useEffect, useState } from "react";
-import { request } from "../../api/request";
+import { useBookContext } from "../../api/book/BookApiContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import PlusIcon from "../icons/PlusIcon";
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import BooksFormWrapper from "./BooksFormWrapper";
 import BooksMenu from "./BooksMenu";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 export default function BooksMenuWrapper() {
   const [isFormModal, setIsFormModal] = useState(false);
   const [bookList, setBookList] = useState([]);
   const [isMenuLoading, setIsMenuLoading] = useState(false);
 
+  const { BookApi } = useBookContext();
+
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsMenuLoading(true);
-    request
-      .get("/GetAllBooks")
+    BookApi.GetAllBooks()
       .then((resposne) => {
-        setBookList(resposne.data.data);
+        setBookList(resposne);
         setIsMenuLoading(false);
       })
       .catch((error) => {
         console.log(error);
         setIsMenuLoading(false);
       });
-  }, [request]);
+  }, []);
 
   const deleteBook = useCallback(
     (value: any) => {
-      request
-        .delete(`/DeleteBook/${value}`)
+      BookApi.DeleteBook(value)
         .then((response) => {
-          toast.success(response.data.message);
+          toast.success(response.message);
           window.location.reload();
         })
         .catch((error) => console.log(error));
     },
-    [request]
+    [BookApi]
   );
 
   const editBook = useCallback((value: any) => {

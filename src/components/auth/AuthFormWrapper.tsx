@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 import { LoginProps, RegisterProps } from "../../api/auth/AuthDto";
 import { useNavigate } from "react-router-dom";
-import { request } from "../../api/request";
 import { useDispatch } from "react-redux";
 import { SetMySecret, setMyKey } from "../../reducers/authReducer";
+import { useAuthContext } from "../../api/auth/AuthApiContext";
 import { toast } from "react-toastify";
 
 import AuthLoginForm from "./AuthLoginForm";
@@ -15,14 +15,16 @@ export default function AuthFormWrapper() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const { AuthApi } = useAuthContext();
+
   const [initialValuesLogin, setInitialValuesLogin] = useState<LoginProps>({
-    username: "",
+    email: "",
     password: "",
   });
 
   const [initialValuesRegister, setInitialValuesRegister] =
     useState<RegisterProps>({
-      username: "",
+      email: "",
       password: "",
       confirmPassword: "",
     });
@@ -30,41 +32,47 @@ export default function AuthFormWrapper() {
   const login = useCallback(
     (value: any) => {
       setLoading(true);
-      request
-        .post(`/Login`, { email: value.username, password: value.password })
+      AuthApi.Login({ email: value.email, password: value.password })
         .then((resposne) => {
           setLoading(false);
-          if (resposne.data.data.sign) {
-            dispatch(setMyKey({ my_key: resposne.data.data.my_key }));
-            dispatch(SetMySecret({ secret: resposne.data.data.secret }));
+          if (resposne.sign) {
+            dispatch(setMyKey({ my_key: resposne.my_key }));
+            dispatch(SetMySecret({ secret: resposne.secret }));
             navigate("/books");
             toast.success("User succesfully login!");
           } else {
-            toast.error(resposne.data.data);
+            toast.error(resposne);
           }
         })
         .catch((error) => console.log(error));
     },
-    [request, navigate]
+    [navigate, AuthApi]
   );
 
   const register = useCallback(
     (value: any) => {
-      setLoading(true);
-      request
-        .post(`/Register`, { email: value.username, password: value.password })
-        .then((resposne) => {
-          setLoading(false);
-          if (resposne.data.data) {
-            toast.success("User Created!");
-            setFormType("login");
-          } else {
-            toast.error(resposne.data.data);
-          }
+      if (value.password === value.confirmPassword) {
+        setLoading(true);
+        AuthApi.Register({
+          email: value.username,
+          password: value.password,
+          confirmPassword: "",
         })
-        .catch((error) => console.log(error));
+          .then((resposne) => {
+            setLoading(false);
+            if (resposne.sign) {
+              toast.success("User Created!");
+              setFormType("login");
+            } else {
+              toast.error(resposne.data.data);
+            }
+          })
+          .catch((error) => console.log(error));
+      } else {
+        toast.error("Passwords don't same");
+      }
     },
-    [request]
+    [navigate, AuthApi]
   );
 
   return (

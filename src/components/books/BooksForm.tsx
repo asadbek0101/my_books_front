@@ -13,6 +13,7 @@ interface Props {
   readonly submit: (value: any) => void;
   readonly onClickClose: () => void;
   readonly loading: boolean;
+  readonly buttonLoading: boolean;
 }
 
 const validationSchema = object({
@@ -30,6 +31,7 @@ export default function BooksForm({
   submit,
   onClickClose,
   loading = false,
+  buttonLoading = false,
 }: Props) {
   const onChangeTitle = useCallback(
     (event: any) => {
@@ -172,6 +174,7 @@ export default function BooksForm({
                 className="py-2  rounded-1 ms-2"
                 style={{ width: "49%", border: "2px solid #6200ee" }}
                 type="submit"
+                loading={buttonLoading}
               >
                 Submit
               </Button>

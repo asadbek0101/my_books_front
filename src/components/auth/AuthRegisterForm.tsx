@@ -15,7 +15,7 @@ interface Props {
 }
 
 const validationSchema = object({
-  username: string().required("Required!"),
+  email: string().required("Required!"),
   password: string().required("Required!"),
   confirmPassword: string().required("Required!"),
 });
@@ -27,11 +27,11 @@ export default function AuthRegisterForm({
   onChangeFormType,
   submit,
 }: Props) {
-  const onChangeUsername = useCallback(
+  const onChangeEmail = useCallback(
     (event: any) => {
       setInitialValues((prev: any) =>
         update(prev, {
-          username: event.target.value,
+          email: event.target.value,
         })
       );
     },
@@ -78,8 +78,8 @@ export default function AuthRegisterForm({
                 name="username"
                 label="Email"
                 placeholder="Enter your email"
-                value={initialValues.username}
-                onChange={onChangeUsername}
+                value={initialValues.email}
+                onChange={onChangeEmail}
               />
             </div>
             <div className="col-12 mt-3">

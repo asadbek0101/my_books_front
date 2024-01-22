@@ -17,3 +17,7 @@ export interface CreateBookProps {
   readonly isbn: string;
   readonly eben: string;
 }
+
+export interface UpdateBookProps extends CreateBookProps {
+  readonly id: string;
+}

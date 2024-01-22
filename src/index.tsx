@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { Provider } from "react-redux";
 import { configureStore } from "./store/configureStore";
+import { ProviderContainer } from "./containers/ProviderContainer";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,11 +20,13 @@ const store = configureStore();
 
 root.render(
   <Provider store={store.store}>
-    <AppLayout>
-      <BrowserRouter>
-        <AppContainer />
-        <ToastContainer />
-      </BrowserRouter>
-    </AppLayout>
+    <ProviderContainer>
+      <AppLayout>
+        <BrowserRouter>
+          <AppContainer />
+          <ToastContainer />
+        </BrowserRouter>
+      </AppLayout>
+    </ProviderContainer>
   </Provider>
 );

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import BooksForm from "./BooksForm";
 import { CreateBookProps } from "../../api/book/BookDto";
-import { request } from "../../api/request";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useBookContext } from "../../api/book/BookApiContext";
 
 interface Props {
   readonly onClickClose: () => void;
@@ -11,6 +11,7 @@ interface Props {
 
 export default function BooksFormWrapper({ onClickClose }: Props) {
   const [formLoading, setFormLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [initialValues, setInitialValues] = useState<CreateBookProps>({
     title: "",
     cover: "",
@@ -21,40 +22,42 @@ export default function BooksFormWrapper({ onClickClose }: Props) {
   });
 
   const { bookId } = useParams();
+  const { BookApi } = useBookContext();
 
   useEffect(() => {
     if (Boolean(bookId)) {
       setFormLoading(true);
-      request
-        .get(`GetBook/${bookId}`)
+      BookApi.GetOneBook(Number(bookId))
         .then((response) => {
-          setInitialValues(response.data.data.data);
+          console.log(response);
+          setInitialValues(response.data.data);
           setFormLoading(false);
         })
         .catch((error) => console.log(error));
     }
-  }, [bookId, request]);
+  }, [bookId]);
 
   const submit = useCallback(
     (value: any) => {
+      setButtonLoading(true);
       if (bookId) {
-        request
-          .put(`/UpdateBook`, {
-            ...value,
-          })
+        BookApi.UpdateBook({
+          ...value,
+        })
           .then((response) => {
             window.location.reload();
             toast.success(response.data.message);
+            setButtonLoading(false);
           })
           .catch((error) => console.log(error));
       } else {
-        request
-          .post(`/CreateBook`, {
-            ...value,
-          })
+        BookApi.CreateBook({
+          ...value,
+        })
           .then((response) => {
             window.location.reload();
             toast.success(response.data.message);
+            setButtonLoading(false);
           })
           .catch((error) => console.log(error));
       }
@@ -69,6 +72,7 @@ export default function BooksFormWrapper({ onClickClose }: Props) {
       setInitialValues={setInitialValues}
       onClickClose={onClickClose}
       submit={submit}
+      buttonLoading={buttonLoading}
     />
   );
 }
