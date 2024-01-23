@@ -54,17 +54,17 @@ export default function AuthFormWrapper() {
       if (value.password === value.confirmPassword) {
         setLoading(true);
         AuthApi.Register({
-          email: value.username,
+          email: value.email,
           password: value.password,
           confirmPassword: "",
         })
           .then((resposne) => {
             setLoading(false);
-            if (resposne.sign) {
-              toast.success("User Created!");
+            if (resposne.code === 1) {
+              toast.success(resposne.message);
               setFormType("login");
             } else {
-              toast.error(resposne.data.data);
+              toast.error(resposne.message);
             }
           })
           .catch((error) => console.log(error));

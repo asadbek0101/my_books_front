@@ -64,7 +64,7 @@ export default function AuthLoginForm({
             </div>
             <div className="col-12 mt-3">
               <InputField
-                name="username"
+                name="email"
                 label="Email"
                 placeholder="Enter your email"
                 value={initialValues.email}
